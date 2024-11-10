@@ -28,8 +28,8 @@ jobs:
       - name: Build iso image to local
         uses: docker/build-push-action@v6
         with:
-          context: hack/gen-repository-iso
-          file: hack/gen-repository-iso/${{ matrix.dockerfile }}
+          context: docker
+          file: docker/${{ matrix.dockerfile }}
           platforms: linux/amd64
           outputs: type=local,dest=./output
       - name: create release and upload assets
