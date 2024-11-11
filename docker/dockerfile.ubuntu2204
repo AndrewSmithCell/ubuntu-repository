@@ -44,8 +44,8 @@ RUN mkdir -p downloaded \
     && dpkg-scanpackages ./ /dev/null > Packages
 RUN python3 ubuntu-repository.py
 RUN cp packages.list.* packages/
-RUN tar -cvzf packages.z packages
-
+RUN date=$(date '+%Y%m%d%H%M%S')
+RUN tar -cvzf packages-$date.z packages
 FROM scratch
 COPY --from=ubuntu2204 /package/*.z /
 COPY --from=ubuntu2204 /package/packages.list.* /
