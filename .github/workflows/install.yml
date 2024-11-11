@@ -34,7 +34,7 @@ jobs:
           outputs: type=local,dest=./output
       - name: Copy package list and update & push git changes
         run: |
-          cp -i ./output/packages.list.all docker/packages.list.all 
+          cp -f ./output/packages.list.all docker/packages.list.all 
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
