@@ -8,7 +8,7 @@ ARG PKGS=.common[],.debs[],.ubuntu[],.ubuntu2204[]
 # check version
 RUN cat /etc/os-release
 
-ARG BUILD_TOOLS="apt-transport-https software-properties-common ca-certificates curl wget gnupg dpkg-dev genisoimage lsb-release tar"
+ARG BUILD_TOOLS="apt-transport-https software-properties-common ca-certificates curl wget gnupg dpkg-dev genisoimage lsb-release tar python3"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # dump system package list
@@ -34,19 +34,17 @@ RUN apt-get update
 WORKDIR /package
 COPY packages.yaml .
 COPY packages.list.all .
+COPY ubuntu-repository.py .
 COPY --from=mikefarah/yq:4.11.1 /usr/bin/yq /usr/bin/yq
 RUN yq eval "${PKGS}" packages.yaml >> packages.list.required \
    && sort -u packages.list.required | xargs apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances | grep "^\w" | sort -u > packages.list.requiredwithdepend
-RUN comm -13 packages.list.all packages.list.requiredwithdepend > packages.list.diff
-RUN comm packages.all packages.list.requiredwithdepend | sed 's/\s//g' > packages.list.all
-RUN mkdir -p ${DIR} \
-    && cd ${DIR} \
-    && sort -u ../packages.list.diff | xargs apt-get download \
-    && dpkg-scanpackages ./ /dev/null | gzip -9c > ./Packages.gz
-RUN sort -u packages.list.all | xargs apt-cache madison > packages.list.madison
-RUN sed -i 's/^\s*\(\S*\)\s|\s\(\S*\)\s.*/\1=\2/g' packages.list.madison
-RUN cp packages.list.* ${DIR}/
-RUN tar -cvzf ${DIR}.z ${DIR}
+RUN mkdir -p downloaded \
+    && cd downloaded \
+    && sort -u ../packages.list.requiredwithdepend | xargs apt-get download \
+    && dpkg-scanpackages ./ /dev/null > Packages
+RUN python3 ubuntu-repository.py
+RUN cp packages.list.* packages/
+RUN tar -cvzf packages.z packages
 
 FROM scratch
 COPY --from=ubuntu2204 /package/*.z /
