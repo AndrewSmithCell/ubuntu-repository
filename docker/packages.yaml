@@ -31,7 +31,7 @@ ubuntu2004:
 
 # The minimum version of docker-ce on ubuntu 2204 is 20.10.13
 ubuntu2204:
-  - vlc
+  - cifs-utils
 almalinux: []
 
 almalinux90: []
