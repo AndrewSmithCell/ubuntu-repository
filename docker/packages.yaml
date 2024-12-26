@@ -31,7 +31,17 @@ ubuntu2004:
 
 # The minimum version of docker-ce on ubuntu 2204 is 20.10.13
 ubuntu2204:
-  - cifs-utils
+  - cython3
+  - bzip2
+  - gzip
+  - openjdk-8-jre-headless
+  - openjdk-8-jdk-headless
+  - jq
+  - xz-utils
+  - ghc
+  - nasm
+  - libtinfo5
+  - xz-utils
 almalinux: []
 
 almalinux90: []
