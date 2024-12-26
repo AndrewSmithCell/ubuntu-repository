@@ -1139,3 +1139,4 @@ temurin-23-jre=23.0.1.0.0+11-1
 temurin-8-jdk=8.0.432.0.0+6-1
 temurin-8-jre=8.0.432.0.0+6-1
 xz-utils=5.2.5-2ubuntu1
+openjdk-21-jdk-headless=21.0.5+11-1ubuntu1~22.04
