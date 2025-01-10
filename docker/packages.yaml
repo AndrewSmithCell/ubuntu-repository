@@ -31,8 +31,8 @@ ubuntu2004:
 
 # The minimum version of docker-ce on ubuntu 2204 is 20.10.13
 ubuntu2204:
-  - openjdk-22-jdk-headless
-  - openjdk-22-jre-headless
+  - openjdk-21-jdk-headless
+  - openjdk-21-jre-headless
 almalinux: []
 
 almalinux90: []
