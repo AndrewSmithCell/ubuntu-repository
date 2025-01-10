@@ -31,11 +31,10 @@ ubuntu2004:
 
 # The minimum version of docker-ce on ubuntu 2204 is 20.10.13
 ubuntu2204:
-  - locales
-  - language-pack-ko
-  - language-pack-ko-base
-  - manpages
-  - language-support-ko
+  - ibus-mozc
+  - fcitx-mozc
+  - ibus-anthy
+  
 almalinux: []
 
 almalinux90: []
