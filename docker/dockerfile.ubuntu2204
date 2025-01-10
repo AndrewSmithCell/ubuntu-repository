@@ -44,7 +44,6 @@ RUN mkdir -p downloaded \
 RUN python3 ubuntu-repository.py
 RUN cp packages.list.* packages/
 RUN date=$(date '+%Y%m%d%H%M%S') && tar -cvzf packages-$date.tar.gz packages
-RUN check-language-support -l ko
 FROM scratch
 COPY --from=ubuntu2204 /package/*.tar.gz /
 COPY --from=ubuntu2204 /package/packages.list.* /
