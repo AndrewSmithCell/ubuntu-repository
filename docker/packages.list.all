@@ -1141,3 +1141,5 @@ temurin-8-jre=8.0.432.0.0+6-1
 xz-utils=5.2.5-2ubuntu1
 openjdk-21-jdk-headless=21.0.5+11-1ubuntu1~22.04
 libexpat1-dev=2.4.7-1ubuntu0.5
+language-pack-ko=1:22.04+20240902
+language-pack-ko-base=1:22.04+20240902
