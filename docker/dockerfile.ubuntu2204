@@ -11,6 +11,12 @@ RUN cat /etc/os-release
 ARG BUILD_TOOLS="apt-transport-https software-properties-common ca-certificates curl wget gnupg dpkg-dev genisoimage lsb-release tar python3"
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN apt-get update
+RUN apt-get install -y locales locales-all
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+
 # dump system package list
 RUN dpkg --get-selections | grep -v deinstall | cut -f1 | cut -d ':' -f1 > packages.list
 RUN apt update -qq \
@@ -18,6 +24,8 @@ RUN apt update -qq \
     #&& add-apt-repository ppa:gluster/glusterfs-7 -y \
     && apt update -qq
 RUN apt install -y language-selector-common
+RUN locale -a
+
 RUN check-language-support -a
 RUN mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
