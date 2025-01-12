@@ -49,7 +49,6 @@ RUN yq eval "${PKGS}" packages.yaml >> packages.list.required \
 RUN mkdir -p downloaded \
     && cd downloaded \
     && sort -u ../packages.list.requiredwithdepend | xargs apt-get download \
-    && apt-get download $(check-language-support -a) \
     && dpkg-scanpackages ./ /dev/null > Packages
 RUN python3 ubuntu-repository.py
 RUN cp packages.list.* packages/
