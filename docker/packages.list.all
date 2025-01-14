@@ -1787,3 +1787,7 @@ libre2-9=20220201+dfsg-1
 libvoikko1=4.3.1-1build1
 libxcb-ewmh2=0.4.1-1.1build2
 m17n-db=1.8.0-3
+libglu1-mesa=9.0.2-1
+libgtkglext1=1.2.0-11
+libimage-exiftool-perl=12.40+dfsg-1
+libopengl0=1.4.0-1
