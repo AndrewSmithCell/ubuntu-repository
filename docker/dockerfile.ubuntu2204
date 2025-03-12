@@ -19,6 +19,8 @@ ENV LANGUAGE en_US.UTF-8
 
 # dump system package list
 RUN dpkg --get-selections | grep -v deinstall | cut -f1 | cut -d ':' -f1 > packages.list
+RUN apt list --installed
+
 RUN apt update -qq \
     && apt install -y --no-install-recommends $BUILD_TOOLS \
     #&& add-apt-repository ppa:gluster/glusterfs-7 -y \
