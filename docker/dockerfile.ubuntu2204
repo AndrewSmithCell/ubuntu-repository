@@ -47,6 +47,7 @@ COPY ubuntu-repository.py .
 COPY --from=mikefarah/yq:4.11.1 /usr/bin/yq /usr/bin/yq
 RUN yq eval "${PKGS}" packages.yaml >> packages.list.required \
    && sort -u packages.list.required | xargs apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances | grep "^\w" | sort -u > packages.list.requiredwithdepend
+RUN cat packages.list.requiredwithdepend
 RUN mkdir -p downloaded \
     && cd downloaded \
     && sort -u ../packages.list.requiredwithdepend | xargs apt-get download \
