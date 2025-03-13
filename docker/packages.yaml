@@ -31,9 +31,7 @@ ubuntu2004:
 
 # The minimum version of docker-ce on ubuntu 2204 is 20.10.13
 ubuntu2204:
-  - python3.13
-  - python3.13-dev
-  - python3.13-venv
+  - python3.10-distutil
   
 almalinux: []
 
