@@ -27,6 +27,9 @@ ubuntu: []
 ubuntu1804: []
 
 ubuntu2004:
+
+# The minimum version of docker-ce on ubuntu 2204 is 20.10.13
+ubuntu2204:
   - adduser
   - adoptium-ca-certificates
   - adwaita-icon-theme
@@ -2123,19 +2126,9 @@ ubuntu2004:
   - python3.13-venv
   - yarn
   - default-jdk
-  - nodejs 18
   - python3.11
   - python3.11-venv
   - python3.11-dev
-
-
-# The minimum version of docker-ce on ubuntu 2204 is 20.10.13
-ubuntu2204:
-yarn
-default-jdk
-nodejs 18
-python3.11
-
   
 almalinux: []
 
