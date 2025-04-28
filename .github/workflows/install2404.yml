@@ -1,0 +1,49 @@
+name: gen-repository-iso-24.04
+on:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'tags to create build'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions: write-all
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu-24.04-debs
+            dockerfile: dockerfile.ubuntu2404
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build iso image to local
+        uses: docker/build-push-action@v6
+        with:
+          context: docker
+          file: docker/${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          outputs: type=local,dest=./output
+      - name: Copy package list and update & push git changes
+        run: |
+          cp -f ./output/packages.list.all docker/packages.list.all 
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "AUTO updated"
+          git push --force
+      - name: create release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./output/*.tar.gz
+            ./output/packages.*
+          tag_name: ${{ github.event.inputs.tags }}
