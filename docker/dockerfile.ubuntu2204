@@ -30,8 +30,6 @@ RUN add-apt-repository ppa:deadsnakes/ppa
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 RUN curl -fsSL https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - 
-RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
-RUN echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
 RUN apt-get update
 WORKDIR /package
 COPY packages.yaml .
