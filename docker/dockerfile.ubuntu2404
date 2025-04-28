@@ -1,0 +1,54 @@
+FROM ubuntu:24.04 as ubuntu2404
+ARG TARGETARCH
+ARG DISTRO=ubuntu2404
+ARG OS_RELEASE=jammy
+ARG DIR=ubuntu-24.04-${TARGETARCH}-debs
+ARG PKGS=.common[],.debs[],.ubuntu[],.ubuntu2404[]
+
+# check version
+RUN cat /etc/os-release
+
+ARG BUILD_TOOLS="apt-transport-https software-properties-common ca-certificates curl wget gnupg dpkg-dev genisoimage lsb-release tar python3"
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update
+
+# dump system package list
+RUN dpkg --get-selections | grep -v deinstall | cut -f1 | cut -d ':' -f1 > packages.list
+RUN apt list --installed | cut -d'/' -f1 | uniq
+RUN apt update -qq \
+    && apt install -y --no-install-recommends $BUILD_TOOLS \
+    #&& add-apt-repository ppa:gluster/glusterfs-7 -y \
+    && apt update -qq
+
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | apt-key add -
+RUN echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN add-apt-repository ppa:ubuntu-toolchain-r/test
+RUN curl -fsSL https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - 
+RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | apt-key add -
+RUN echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+RUN apt-get update
+WORKDIR /package
+COPY packages.yaml .
+COPY packages.list.all .
+COPY ubuntu-repository.py .
+COPY --from=mikefarah/yq:4.11.1 /usr/bin/yq /usr/bin/yq
+RUN yq eval "${PKGS}" packages.yaml >> packages.list.required \
+   && sort -u packages.list.required | xargs apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances | grep "^\w" | sort -u > packages.list.requiredwithdepend
+RUN cat packages.list.requiredwithdepend
+RUN mkdir -p downloaded \
+    && cd downloaded \
+    && sort -u ../packages.list.requiredwithdepend | xargs apt-get download \
+    && dpkg-scanpackages ./ /dev/null > Packages
+RUN python3 ubuntu-repository.py
+RUN cp packages.list.* packages/
+RUN date=$(date '+%Y%m%d%H%M%S') && tar -cvzf packages-$date.tar.gz packages
+FROM scratch
+COPY --from=ubuntu2404 /package/*.tar.gz /
+COPY --from=ubuntu2404 /package/packages.list.* /
+COPY --from=ubuntu2404 /package/packages.yaml /
