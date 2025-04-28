@@ -8,7 +8,7 @@ ARG PKGS=.common[],.debs[],.ubuntu[],.ubuntu2404[]
 # check version
 RUN cat /etc/os-release
 
-ARG BUILD_TOOLS="apt-transport-https software-properties-common ca-certificates curl wget gnupg dpkg-dev genisoimage lsb-release tar python3"
+ARG BUILD_TOOLS="apt-transport-https software-properties-common ca-certificates curl wget gnupg dpkg-dev genisoimage lsb-release tar python3 p7zip-full"
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
@@ -45,8 +45,8 @@ RUN mkdir -p downloaded \
     && dpkg-scanpackages ./ /dev/null > Packages
 RUN python3 ubuntu-repository.py
 RUN cp packages.list.* packages/
-RUN date=$(date '+%Y%m%d%H%M%S') && tar -cvzf packages-$date.tar.gz packages
+RUN date=$(date '+%Y%m%d%H%M%S') && 7z a -t7z -mx -m0=LZMA2 -v40m packages-$date.tar.gz packages/
 FROM scratch
-COPY --from=ubuntu2404 /package/*.tar.gz /
+COPY --from=ubuntu2404 /package/*.tar.gz.* /
 COPY --from=ubuntu2404 /package/packages.list.* /
 COPY --from=ubuntu2404 /package/packages.yaml /
