@@ -24,14 +24,14 @@ RUN apt update -qq \
 RUN mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN curl https://packages.adoptium.net/artifactory/api/gpg/key/public | tee -a /etc/apt/keyrings/adoptium.asc
-RUN echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
+RUN curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor -o /etc/apt/keyrings/adoptium.gpg
+RUN echo "deb [signed-by=/etc/apt/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 RUN curl -fsSL https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - 
-RUN curl https://www.mongodb.org/static/pgp/server-4.2.asc | tee -a /etc/apt/keyrings/mongodb-4_2.asc
-RUN echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/mongodb-4_2.asc] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+RUN curl -fsSL https://www.mongodb.org/static/pgp/server-4.2.asc | gpg --dearmor -o /etc/apt/keyrings/mongodb-4_2.gpg
+RUN echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/mongodb-4_2.gpg] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.2.list
 RUN apt-get update
 WORKDIR /package
 COPY packages.yaml .
